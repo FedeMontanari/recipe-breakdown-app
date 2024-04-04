@@ -5,11 +5,12 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { prisma } from "@/lib/prisma";
+import Link from "next/link";
 
 export default async function Home() {
   const data = await prisma.recipe.findMany({
     include: {
-      ingredientsList: true,
+      ingredients: true,
     },
   });
   return (
@@ -24,22 +25,14 @@ export default async function Home() {
         {data.map((v, i) => {
           return (
             <Accordion key={i} type="single" collapsible>
-              <AccordionItem value={v.slug}>
+              <AccordionItem value={v.name}>
                 <AccordionTrigger>{v.name}</AccordionTrigger>
-                <AccordionContent>
-                  {v.ingredientsList.map((ing, i) => {
-                    return (
-                      <div key={i}>
-                        <p>{ing.name}</p>
-                        <p>$ {ing.price}</p>
-                      </div>
-                    );
-                  })}
-                </AccordionContent>
+                <AccordionContent></AccordionContent>
               </AccordionItem>
             </Accordion>
           );
         })}
+        <Link href="/form">Formulario</Link>
       </div>
     </main>
   );
