@@ -14,6 +14,9 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { useState } from "react";
+import { toast } from "sonner";
+import { LoaderCircle } from "lucide-react";
 
 const formSchema = z
   .object({
@@ -42,6 +45,8 @@ const formSchema = z
   }));
 
 export default function IngredientForm() {
+  const [loading, setLoading] = useState<boolean>(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -51,7 +56,33 @@ export default function IngredientForm() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    const postValues = {
+      ...values,
+      price: Number(values.price),
+    };
+
+    setLoading(true);
+
+    fetch("/api/ingredient", {
+      method: "POST",
+      body: JSON.stringify(postValues),
+    })
+      .then((res) => {
+        if (res.status === 201) {
+          setLoading(false);
+          form.reset();
+          toast("Creado con exito. Puede cerrar el formulario");
+        } else {
+          toast("Ha ocurrido un error, por favor, intente nuevamente");
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+        toast(
+          "Ha ocurrido un error con el servidor. Por favor, intente de nuevo. Si el problema persiste comuniquese con el administrador"
+        );
+      });
   }
 
   return (
@@ -104,7 +135,14 @@ export default function IngredientForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Guardar</Button>
+
+        {loading ? (
+          <p>
+            Cargando <LoaderCircle className="inline animate-spin" />
+          </p>
+        ) : (
+          <Button type="submit">Guardar</Button>
+        )}
       </form>
     </Form>
   );

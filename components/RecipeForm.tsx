@@ -14,6 +14,9 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { useState } from "react";
+import { LoaderCircle } from "lucide-react";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   name: z
@@ -30,6 +33,8 @@ const formSchema = z.object({
 });
 
 export default function RecipeForm() {
+  const [loading, setLoading] = useState<boolean>(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -38,7 +43,27 @@ export default function RecipeForm() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    setLoading(true);
+
+    fetch("/api/recipe", {
+      method: "POST",
+      body: JSON.stringify(values),
+    })
+      .then((res) => {
+        if (res.status === 201) {
+          setLoading(false);
+          form.reset();
+          toast("Creado con exito. Puede cerrar el formulario");
+        } else {
+          toast("Ha ocurrido un error, por favor, intente nuevamente");
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        toast(
+          "Ha ocurrido un error con el servidor. Por favor, intente de nuevo. Si el problema persiste comuniquese con el administrador"
+        );
+      });
   }
 
   return (
@@ -64,7 +89,13 @@ export default function RecipeForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Guardar</Button>
+        {loading ? (
+          <p>
+            Cargando <LoaderCircle className="inline animate-spin" />
+          </p>
+        ) : (
+          <Button type="submit">Guardar</Button>
+        )}
       </form>
     </Form>
   );
