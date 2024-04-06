@@ -37,7 +37,7 @@ export default function Sidebar() {
               <h3 className="text-start text-sm font-semibold text-muted-foreground">
                 Navegación
               </h3>
-              <ModeToggle buttonVariant="secondary" className="ml-auto pr-3" />
+              <ModeToggle className="ml-auto pr-3" />
             </div>
             {mainElements.map((v, i) => (
               <Button
