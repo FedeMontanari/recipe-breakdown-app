@@ -30,7 +30,7 @@ import {
 import { Button } from "./ui/button";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Ingredient, Recipe } from "@prisma/client";
+import { Product, Recipe } from "@prisma/client";
 
 import { Check, ChevronsUpDown, LoaderCircle } from "lucide-react";
 
@@ -41,7 +41,7 @@ export default function RecipeIngredientsForm() {
   const [dialogLoading, setDialogLoading] = useState<boolean>(true);
 
   const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [ingredients, setIngredients] = useState<Product[]>([]);
 
   useEffect(() => {
     fetch("/api/recipe")
@@ -85,13 +85,13 @@ export default function RecipeIngredientsForm() {
       .catch((err) => {
         console.error(err);
         toast(
-          "Ha ocurrido un error con el servidor. Por favor, intente de nuevo. Si el problema persiste comuniquese con el administrador"
+          "Ha ocurrido un error con el servidor. Por favor, intente de nuevo. Si el problema persiste comuniquese con el administrador",
         );
       });
   }
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center">
+    <div className="flex h-full w-full flex-col items-center justify-center">
       {dialogLoading ? (
         <p className="text-lg font-bold">
           Cargando <LoaderCircle className="inline animate-spin" />
@@ -130,7 +130,7 @@ export default function RecipeIngredientsForm() {
                         <Check
                           className={cn(
                             "mr-2 h-4 w-4",
-                            value === ing.name ? "opacity-100" : "opacity-0"
+                            value === ing.name ? "opacity-100" : "opacity-0",
                           )}
                         />
                         {ing.name}
@@ -198,12 +198,12 @@ export function ComboboxForm() {
                       role="combobox"
                       className={cn(
                         "w-[200px] justify-between",
-                        !field.value && "text-muted-foreground"
+                        !field.value && "text-muted-foreground",
                       )}
                     >
                       {field.value
                         ? languages.find(
-                            (language) => language.value === field.value
+                            (language) => language.value === field.value,
                           )?.label
                         : "Select language"}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -228,7 +228,7 @@ export function ComboboxForm() {
                               "mr-2 h-4 w-4",
                               language.value === field.value
                                 ? "opacity-100"
-                                : "opacity-0"
+                                : "opacity-0",
                             )}
                           />
                           {language.label}
