@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    const entries = await prisma.ingredient.findMany();
+    const entries = await prisma.product.findMany();
     if (!entries.length) {
       return Response.json({ message: "No entries found" }, { status: 404 });
     }
@@ -13,7 +13,7 @@ export async function GET() {
           price: Number(v.price),
         };
       }),
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error(error);
@@ -24,12 +24,12 @@ export async function GET() {
 export async function POST(req: Request) {
   const data = await req.json();
   try {
-    const newEntry = await prisma.ingredient.create({
+    const newEntry = await prisma.product.create({
       data,
     });
     return Response.json(
       { message: "Entry created", newEntry },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error(error);
@@ -40,7 +40,7 @@ export async function POST(req: Request) {
 export async function PUT(req: Request) {
   const data = await req.json();
   try {
-    const entry = await prisma.ingredient.update({
+    const entry = await prisma.product.update({
       where: {
         id: data.id,
       },
@@ -49,7 +49,7 @@ export async function PUT(req: Request) {
     if (entry) {
       return Response.json(
         { message: "Entry updated", entry },
-        { status: 200 }
+        { status: 200 },
       );
     }
     return Response.json({ message: "Entry not found" }, { status: 404 });
@@ -62,7 +62,7 @@ export async function PUT(req: Request) {
 export async function DELETE(req: Request) {
   const data = await req.json();
   try {
-    const entry = await prisma.ingredient.delete({
+    const entry = await prisma.product.delete({
       where: {
         id: data.id,
       },
@@ -70,7 +70,7 @@ export async function DELETE(req: Request) {
     if (entry) {
       return Response.json(
         { message: "Entry deleted", entry },
-        { status: 200 }
+        { status: 200 },
       );
     }
     return Response.json({ message: "Entry not found" }, { status: 404 });

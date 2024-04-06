@@ -10,12 +10,43 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Ingredient } from "@prisma/client";
+import { Product } from "@prisma/client";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, LoaderCircle, MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
 
-export const columns: ColumnDef<Ingredient>[] = [
+function deleteHandler(product: Product) {
+  fetch("/api/product", {
+    method: "DELETE",
+    body: JSON.stringify(product),
+  })
+    .then((res) => {
+      if (res.status === 200) {
+        toast("Producto eliminado con éxito");
+      } else {
+        toast("Ha ocurrido un error, por favor intente de nuevo");
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      toast("Ha ocurrido un error, por favor intente de nuevo");
+    });
+  return true;
+}
+
+export const columns: ColumnDef<Product>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -73,28 +104,61 @@ export const columns: ColumnDef<Ingredient>[] = [
       const product = row.original;
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost">
-              <span className="sr-only">Abrir Menú</span>
-              <MoreHorizontal size={18} />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => {
-                navigator.clipboard.writeText(product.name);
-                toast("Copiado al portapapeles!");
-              }}
-            >
-              Copiar Nombre del Producto
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Ver stock</DropdownMenuItem>
-            <DropdownMenuItem>Ver recetas</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <AlertDialog>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost">
+                <span className="sr-only">Abrir Menú</span>
+                <MoreHorizontal size={20} />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => {
+                  navigator.clipboard.writeText(product.name);
+                  toast("Copiado al portapapeles!");
+                }}
+              >
+                Copiar Nombre del Producto
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="bg-destructive">
+                <AlertDialogTrigger>Eliminar</AlertDialogTrigger>
+              </DropdownMenuItem>
+              <DropdownMenuItem>Ver recetas</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                ¿Desea eliminar este producto?
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                Esta acción no se puede deshacer y eliminara este producto de la
+                base de datos de forma permanente.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => {
+                  toast(
+                    <p>
+                      Cargando{" "}
+                      <LoaderCircle className="inline animate-spin" size={12} />
+                    </p>,
+                  );
+                  deleteHandler(product);
+                }}
+                className="bg-destructive"
+              >
+                Confirmar
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       );
     },
   },

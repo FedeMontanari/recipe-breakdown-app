@@ -63,7 +63,7 @@ export default function IngredientForm() {
 
     setLoading(true);
 
-    fetch("/api/ingredient", {
+    fetch("/api/product", {
       method: "POST",
       body: JSON.stringify(postValues),
     })

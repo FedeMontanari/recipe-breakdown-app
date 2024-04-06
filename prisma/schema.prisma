@@ -8,11 +8,11 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model Ingredient {
+model Product {
   id          Int                @id @default(autoincrement())
   name        String
   slug        String
-  price       Decimal
+  price       Float
   recipes     Recipe[]
   recipeItems RecipeIngredient[]
 }
@@ -20,15 +20,15 @@ model Ingredient {
 model Recipe {
   id          Int                @id @default(autoincrement())
   name        String
-  ingredients Ingredient[]
+  products    Product[]
   recipeItems RecipeIngredient[]
 }
 
 model RecipeIngredient {
-  id           Int        @id @default(autoincrement())
-  recipe       Recipe     @relation(fields: [recipeId], references: [id])
-  recipeId     Int
-  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
-  ingredientId Int
-  quantity     Int
+  id        Int     @id @default(autoincrement())
+  recipe    Recipe  @relation(fields: [recipeId], references: [id])
+  recipeId  Int
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+  quantity  Int
 }

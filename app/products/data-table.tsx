@@ -18,6 +18,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Table,
   TableBody,
   TableCell,
@@ -77,7 +84,22 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
+      {/* Table controls */}
       <div className="flex items-center py-4">
+        {/* Element to select the max rows to display */}
+        <Select onValueChange={(value) => table.setPageSize(Number(value))}>
+          <SelectTrigger className="mr-1 max-w-min">
+            <SelectValue placeholder="Filas" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="5">5</SelectItem>
+            <SelectItem value="10">10</SelectItem>
+            <SelectItem value="20">20</SelectItem>
+            <SelectItem value="50">50</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* Search bar */}
         <Input
           placeholder="Filtrar por nombre..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
@@ -87,6 +109,7 @@ export function DataTable<TData, TValue>({
           className="max-w-sm"
         />
         <div className="ml-auto space-x-2">
+          {/* Dialog modal to contain the upload product form */}
           <Dialog
             onOpenChange={function (open) {
               if (!open) router.refresh();
@@ -105,7 +128,8 @@ export function DataTable<TData, TValue>({
             </DialogContent>
           </Dialog>
 
-          <DropdownMenu>
+          {/* Menu to select which columns to be displayed */}
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline">Mostrar</Button>
             </DropdownMenuTrigger>
@@ -128,9 +152,10 @@ export function DataTable<TData, TValue>({
                   );
                 })}
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
         </div>
       </div>
+      {/* Table itself */}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -174,17 +199,19 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  No hay resultados.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-      <div className="flex-1 pl-1 pt-1 text-sm text-muted-foreground">
+      {/* Amount of rows selected context */}
+      <div className="flex-1 pl-1 pt-1 text-xs text-muted-foreground">
         {table.getFilteredSelectedRowModel().rows.length} de{" "}
         {table.getFilteredRowModel().rows.length} fila(s) seleccionadas.
       </div>
+      {/* Navigation */}
       <div className="flex items-center justify-end space-x-2 py-4">
         <Button
           variant="outline"
