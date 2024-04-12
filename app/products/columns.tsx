@@ -24,27 +24,9 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, LoaderCircle, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
-
-function deleteHandler(product: Product) {
-  fetch("/api/product", {
-    method: "DELETE",
-    body: JSON.stringify(product),
-  })
-    .then((res) => {
-      if (res.status === 200) {
-        toast("Producto eliminado con éxito");
-      } else {
-        toast("Ha ocurrido un error, por favor intente de nuevo");
-      }
-    })
-    .catch((err) => {
-      console.error(err);
-      toast("Ha ocurrido un error, por favor intente de nuevo");
-    });
-  return true;
-}
+import RowActionsComponent from "@/components/ColumnActionsComponent";
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -72,6 +54,32 @@ export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "name",
     header: "Nombre",
+  },
+  {
+    accessorKey: "unit",
+    header: "Medida",
+    cell: ({ row }) => {
+      const value = row.getValue("unit");
+      let translatedValue;
+      switch (value) {
+        case "unit":
+          translatedValue = "Unidad(es)";
+          break;
+        case "kilogram":
+          translatedValue = "Kilogramo(s)";
+          break;
+        case "liter":
+          translatedValue = "Litro(s)";
+          break;
+        case "unknown":
+          translatedValue = "Otro";
+          break;
+
+        default:
+          break;
+      }
+      return <div>{translatedValue}</div>;
+    },
   },
   {
     accessorKey: "price",
@@ -103,63 +111,7 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => {
       const product = row.original;
 
-      return (
-        <AlertDialog>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost">
-                <span className="sr-only">Abrir Menú</span>
-                <MoreHorizontal size={20} />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => {
-                  navigator.clipboard.writeText(product.name);
-                  toast("Copiado al portapapeles!");
-                }}
-              >
-                Copiar Nombre del Producto
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="bg-destructive">
-                <AlertDialogTrigger>Eliminar</AlertDialogTrigger>
-              </DropdownMenuItem>
-              <DropdownMenuItem>Ver recetas</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>
-                ¿Desea eliminar este producto?
-              </AlertDialogTitle>
-              <AlertDialogDescription>
-                Esta acción no se puede deshacer y eliminara este producto de la
-                base de datos de forma permanente.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={() => {
-                  toast(
-                    <p>
-                      Cargando{" "}
-                      <LoaderCircle className="inline animate-spin" size={12} />
-                    </p>,
-                  );
-                  deleteHandler(product);
-                }}
-                className="bg-destructive"
-              >
-                Confirmar
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      );
+      return <RowActionsComponent product={product} />;
     },
   },
 ];

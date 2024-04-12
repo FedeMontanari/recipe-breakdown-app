@@ -26,8 +26,8 @@ export default function RootLayout({
           enableSystem={false}
         >
           <Sidebar />
-          <main className="md:ml-56">{children}</main>
-          <Toaster />
+          <main className="mt-10 md:ml-56 md:mt-0">{children}</main>
+          <Toaster richColors />
         </ThemeProvider>
       </body>
     </html>

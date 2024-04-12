@@ -1,6 +1,6 @@
 "use client";
 
-import IngredientForm from "@/components/IngredientForm";
+import ProductForm from "@/components/ProductForm";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,12 +10,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -122,7 +116,7 @@ export function DataTable<TData, TValue>({
               <DialogHeader>
                 <DialogTitle>Complete el formulario</DialogTitle>
                 <DialogDescription>
-                  <IngredientForm />
+                  <ProductForm />
                 </DialogDescription>
               </DialogHeader>
             </DialogContent>

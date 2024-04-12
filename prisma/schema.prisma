@@ -13,6 +13,7 @@ model Product {
   name        String
   slug        String
   price       Float
+  unit        Units
   recipes     Recipe[]
   recipeItems RecipeIngredient[]
 }
@@ -31,4 +32,11 @@ model RecipeIngredient {
   product   Product @relation(fields: [productId], references: [id])
   productId Int
   quantity  Int
+}
+
+enum Units {
+  unit
+  kilogram
+  liter
+  unkown
 }

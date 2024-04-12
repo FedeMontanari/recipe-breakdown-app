@@ -30,7 +30,7 @@ export default function Sidebar() {
 
   if (isDesktop) {
     return (
-      <aside className="absolute left-0 h-full w-56 bg-secondary py-5 pl-4">
+      <aside className="absolute left-0 min-h-screen w-56 bg-secondary py-5 pl-4">
         <nav>
           <div className="flex flex-col">
             <div className="flex flex-row items-center justify-evenly">
@@ -66,9 +66,12 @@ export default function Sidebar() {
       <DrawerContent>
         <nav className="w-56 py-5 pl-5">
           <div className="flex flex-col">
-            <h3 className="text-start text-sm font-semibold text-muted-foreground">
-              Navegación
-            </h3>
+            <div className="flex flex-row items-center justify-evenly">
+              <h3 className="text-start text-sm font-semibold text-muted-foreground">
+                Navegación
+              </h3>
+              <ModeToggle className="ml-auto pr-3" />
+            </div>
             {mainElements.map((v, i) => (
               <Button
                 variant="link"
