@@ -76,8 +76,6 @@ export default function RowActionsComponent({
       price: parsedValue,
     };
 
-    console.log(parsedValue);
-
     if (isNaN(parsedValue) && parsedValue <= 0) {
       return new Promise((resolve, reject) => {
         reject(

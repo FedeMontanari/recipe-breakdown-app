@@ -164,7 +164,7 @@ export default function ProductForm() {
                     <SelectItem value="kilogram">Kilogramo</SelectItem>
                     <SelectItem value="liter">Litro</SelectItem>
                     <SelectItem value="unit">Unidad</SelectItem>
-                    <SelectItem value="unkown">Otro</SelectItem>
+                    <SelectItem value="unknown">Otro</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormDescription>
