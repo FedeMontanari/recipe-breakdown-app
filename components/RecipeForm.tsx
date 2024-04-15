@@ -60,8 +60,9 @@ export default function RecipeForm() {
       })
       .catch((err) => {
         console.error(err);
+        setLoading(false);
         toast(
-          "Ha ocurrido un error con el servidor. Por favor, intente de nuevo. Si el problema persiste comuniquese con el administrador"
+          "Ha ocurrido un error con el servidor. Por favor, intente de nuevo. Si el problema persiste comuniquese con el administrador",
         );
       });
   }
@@ -76,14 +77,11 @@ export default function RecipeForm() {
             <FormItem>
               <FormLabel>Nombre</FormLabel>
               <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Ej: Suprema de pollo"
-                  {...field}
-                />
+                <Input type="text" placeholder="Ej: Salsa Tartara" {...field} />
               </FormControl>
               <FormDescription>
-                Este será el nombre de la receta
+                Este será el nombre de la receta. Puede agregar ingredientes a
+                la receta luego.
               </FormDescription>
               <FormMessage />
             </FormItem>

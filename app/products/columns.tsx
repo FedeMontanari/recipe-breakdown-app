@@ -6,7 +6,7 @@ import { Product } from "@prisma/client";
 
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
-import RowActionsComponent from "@/components/ColumnActionsComponent";
+import ColumnActionsComponent from "@/components/ColumnActionsComponent";
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -33,7 +33,7 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: "id",
-    header: "#",
+    header: "ID",
   },
   {
     accessorKey: "name",
@@ -95,7 +95,7 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => {
       const product = row.original;
 
-      return <RowActionsComponent product={product} />;
+      return <ColumnActionsComponent product={product} />;
     },
   },
 ];

@@ -1,6 +1,6 @@
 "use client";
 
-import ProductForm from "@/components/ProductForm";
+import RecipeForm from "@/components/RecipeForm";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -81,7 +81,7 @@ export function DataTable<TData, TValue>({
 
   function deleteSelectionHandler() {
     const deletePromises = table.getSelectedRowModel().rows.map((r) =>
-      fetch("/api/product", {
+      fetch("/api/recipe", {
         method: "DELETE",
         body: JSON.stringify({ id: r.getValue("id") }),
       }),
@@ -134,7 +134,7 @@ export function DataTable<TData, TValue>({
               <DialogHeader>
                 <DialogTitle>Complete el formulario</DialogTitle>
                 <DialogDescription>
-                  <ProductForm />
+                  <RecipeForm />
                 </DialogDescription>
               </DialogHeader>
             </DialogContent>
@@ -142,29 +142,29 @@ export function DataTable<TData, TValue>({
 
           {/* Menu to select which columns to be displayed */}
           {/* <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">Mostrar</Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu> */}
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">Mostrar</Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => {
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) =>
+                          column.toggleVisibility(!!value)
+                        }
+                      >
+                        {column.id}
+                      </DropdownMenuCheckboxItem>
+                    );
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu> */}
         </div>
       </div>
       {/* Table itself */}

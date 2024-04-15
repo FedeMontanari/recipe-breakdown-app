@@ -1,12 +1,9 @@
-"use effect";
-
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -18,11 +15,10 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
-import { Product } from "@prisma/client";
+import { Product, Recipe } from "@prisma/client";
 import { ChangeEvent, useEffect, useState } from "react";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -35,14 +31,168 @@ import {
 } from "./ui/select";
 import { useRouter } from "next/navigation";
 
-export default function RowActionsComponent({
+export default function ColumnActionsComponent({
   product,
+  recipe,
   ...props
 }: {
-  product: Product;
+  product?: Product;
+  recipe?: Recipe;
 }) {
+  if (product) return <ProductComponent product={product} />;
+  if (recipe) return <RecipeComponent recipe={recipe} />;
+}
+
+function RecipeComponent({ recipe }: { recipe: Recipe }) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [editRecipeData, setEditRecipeData] = useState<Recipe>(recipe);
+
+  const router = useRouter();
+
+  function deleteHandler(recipe: Recipe) {
+    return fetch("/api/recipe", {
+      method: "DELETE",
+      body: JSON.stringify(recipe),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        return data.entry;
+      })
+      .catch((err) => {
+        console.error(err);
+        toast.error("Ha ocurrido un error, por favor intente de nuevo");
+      });
+  }
+
+  function editChangeHandler(e: ChangeEvent<HTMLInputElement>) {
+    e.preventDefault();
+    setEditRecipeData({
+      ...editRecipeData,
+      [e.target.name]: e.target.value,
+    });
+  }
+
+  function editHandler() {
+    return fetch("/api/recipe", {
+      method: "PUT",
+      body: JSON.stringify(editRecipeData),
+    })
+      .then((res) => res.json())
+      .then((data) => data.entry)
+      .catch((err) => {
+        console.error(err);
+        toast.error("Ha ocurrido un error, por favor intente de nuevo");
+      });
+  }
+
+  useEffect(() => {
+    setEditRecipeData(recipe);
+  }, [isEditDialogOpen]);
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost">
+            <span className="sr-only">Abrir Menú</span>
+            <MoreHorizontal size={20} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+          <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
+            Editar
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => setIsDeleteDialogOpen(true)}
+            className="text-destructive"
+          >
+            Eliminar
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <AlertDialog
+        open={isEditDialogOpen}
+        onOpenChange={
+          isEditDialogOpen ? setIsEditDialogOpen : setIsDeleteDialogOpen
+        }
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Editar Receta</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-3">
+              <Label>Nombre</Label>
+              <Input
+                type="text"
+                value={editRecipeData.name}
+                name="name"
+                onChange={editChangeHandler}
+              />
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                toast.promise(editHandler(), {
+                  loading: "Cargando...",
+                  success: (data) => {
+                    router.refresh();
+                    return `${data.name} fue editado con éxito`;
+                  },
+                  error: "Ha ocurrido un error, intente de nuevo",
+                });
+              }}
+            >
+              Confirmar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={
+          isEditDialogOpen ? setIsEditDialogOpen : setIsDeleteDialogOpen
+        }
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Desea eliminar esta receta?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción no se puede deshacer y eliminara esta receta de la
+              base de datos de forma permanente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                toast.promise(deleteHandler(recipe), {
+                  loading: "Cargando...",
+                  success: (data) => {
+                    router.refresh();
+                    return `${data.name} fue eliminado con éxito`;
+                  },
+                  error: "Ha ocurrido un error, intente de nuevo",
+                });
+              }}
+              className="bg-destructive"
+            >
+              Confirmar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+}
+
+function ProductComponent({ product }: { product: Product }) {
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
   const [editProductData, setEditProductData] = useState<Product>(product);
 
   const router = useRouter();
@@ -53,7 +203,9 @@ export default function RowActionsComponent({
       body: JSON.stringify(product),
     })
       .then((res) => res.json())
-      .then((data) => data.entry)
+      .then((data) => {
+        return data.entry;
+      })
       .catch((err) => {
         console.error(err);
         toast.error("Ha ocurrido un error, por favor intente de nuevo");
@@ -96,6 +248,9 @@ export default function RowActionsComponent({
       });
   }
 
+  useEffect(() => {
+    setEditProductData(product);
+  }, [isEditDialogOpen]);
   return (
     <>
       <DropdownMenu>
@@ -189,7 +344,7 @@ export default function RowActionsComponent({
                     router.refresh();
                     return `${data.name} fue editado con éxito`;
                   },
-                  error: "Ha ocurrido un error, intenta de nuevo",
+                  error: "Ha ocurrido un error, intente de nuevo",
                 });
               }}
             >
@@ -223,7 +378,7 @@ export default function RowActionsComponent({
                     router.refresh();
                     return `${data.name} fue eliminado con éxito`;
                   },
-                  error: "Ha ocurrido un error, intenta de nuevo",
+                  error: "Ha ocurrido un error, intente de nuevo",
                 });
               }}
               className="bg-destructive"
