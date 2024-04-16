@@ -1,12 +1,18 @@
 "use client";
 
 import ColumnActionsComponent from "@/components/ColumnActionsComponent";
+import IngredientList from "@/components/IngredientList";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Recipe } from "@prisma/client";
+import { Product, RecipeIngredient } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
-import { ClipboardList } from "lucide-react";
 
-export const columns: ColumnDef<Recipe>[] = [
+export const columns: ColumnDef<{
+  id: number;
+  name: string;
+  recipeItems: ({
+    product: Product;
+  } & RecipeIngredient)[];
+}>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -43,7 +49,7 @@ export const columns: ColumnDef<Recipe>[] = [
     cell: ({ row }) => {
       const recipe = row.original;
 
-      return <ClipboardList />;
+      return <IngredientList recipe={recipe} />;
     },
   },
   {

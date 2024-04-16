@@ -16,6 +16,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { Product, Recipe } from "@prisma/client";
@@ -46,6 +54,7 @@ export default function ColumnActionsComponent({
 function RecipeComponent({ recipe }: { recipe: Recipe }) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
   const [editRecipeData, setEditRecipeData] = useState<Recipe>(recipe);
 
   const router = useRouter();
@@ -193,6 +202,8 @@ function ProductComponent({ product }: { product: Product }) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
+  const [isRecipeDialogOpen, setIsRecipeDialogOpen] = useState(false);
+
   const [editProductData, setEditProductData] = useState<Product>(product);
 
   const router = useRouter();
@@ -262,6 +273,10 @@ function ProductComponent({ product }: { product: Product }) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+
+          <DropdownMenuItem onClick={() => setIsRecipeDialogOpen(true)}>
+            Añadir a Receta
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
             Editar
           </DropdownMenuItem>
@@ -273,6 +288,20 @@ function ProductComponent({ product }: { product: Product }) {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <Dialog
+        open={isRecipeDialogOpen}
+        onOpenChange={
+          isRecipeDialogOpen ? setIsRecipeDialogOpen : setIsDeleteDialogOpen
+        }
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Añadir producto a receta</DialogTitle>
+            <DialogDescription>Vadim</DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog
         open={isEditDialogOpen}

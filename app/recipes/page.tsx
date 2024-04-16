@@ -5,7 +5,15 @@ import { columns } from "./columns";
 export const dynamic = "force-dynamic";
 
 export default async function RecipesPage() {
-  const recipeData = await prisma.recipe.findMany();
+  const recipeData = await prisma.recipe.findMany({
+    include: {
+      recipeItems: {
+        include: {
+          product: true,
+        },
+      },
+    },
+  });
 
   return (
     <div className="container mx-auto py-10">
